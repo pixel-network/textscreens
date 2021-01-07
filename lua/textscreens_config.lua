@@ -1,4 +1,11 @@
-textscreenFonts = {}
+
+TextScreens.AllowedTools = {
+	["textscreen"] = true,
+	["remover"] = true,
+	["permaprops"] = true
+}
+
+TextScreens.Fonts = {}
 
 local function addFont(font, t)
 	if CLIENT then
@@ -8,7 +15,7 @@ local function addFont(font, t)
 		surface.CreateFont(font .. "_MENU", t)
 	end
 
-	table.insert(textscreenFonts, font)
+	table.insert(TextScreens.Fonts, font)
 end
 
 --[[
@@ -130,7 +137,7 @@ if CLIENT then
 		for k, v in ipairs(files) do
 			if string.GetExtensionFromFilename(v) == "ttf" then
 				local font = string.StripExtension(v)
-				if table.HasValue(textscreenFonts, "Screens_" .. font) then continue end
+				if table.HasValue(TextScreens.Fonts, "Screens_" .. font) then continue end
 print("-- "  .. font .. "\n" .. [[
 addFont("Screens_ ]] .. font .. [[", {
 	font = font,
