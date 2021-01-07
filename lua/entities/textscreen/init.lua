@@ -44,7 +44,7 @@ end)
 util.AddNetworkString("TextScreens.Update")
 util.AddNetworkString("TextScreens.Download")
 
-function ENT:SetLine(line, text, color, size, font)
+function ENT:SetLine(line, text, color, size, font, rainbow)
 	if not text then return end
 	if string.sub(text, 1, 1) == "#" then
 		text = string.sub(text, 2)
@@ -57,12 +57,15 @@ function ENT:SetLine(line, text, color, size, font)
 
 	font = TextScreens.Fonts[font] ~= nil and font or 1
 
+	rainbow = rainbow or 0
+
 	self.lines = self.lines or {}
 	self.lines[tonumber(line)] = {
 		["text"] = text,
 		["color"] = color,
 		["size"] = size,
-		["font"] = font
+		["font"] = font,
+		["rainbow"] = rainbow
 	}
 end
 

@@ -19,6 +19,7 @@ local COL = 5
 local LEN = 6
 local SIZE = 7
 local CAMSIZE = 8
+local RAINBOW = 9
 
 -- Make ply:ShouldDrawLocalPlayer() never get called more than once a frame
 local localPly
@@ -71,7 +72,11 @@ local function Draw3D2D(ang, pos, camangle, data)
 			-- Posistion
 			surface.SetTextPos(data[i][POSX], data[i][POSY])
 			-- Colour
-			surface.SetTextColor(data[i][COL])
+			if data[i][RAINBOW] ~= 0 then
+				surface.SetTextColor(HSVToColor(CurTime() % 6 * 60, 1, 1))
+			else
+				surface.SetTextColor(data[i][COL])
+			end
 			-- Text
 			surface.DrawText(data[i][TEXT])
 
@@ -144,6 +149,8 @@ local function AddDrawingInfo(ent, rawData)
 		drawData[i][SIZE] = rawData[i]["size"]
 		-- Remove text if text is empty so we don't waste performance
 		if string.len(drawData[i][TEXT]) == 0 or string.len(string.Replace( drawData[i][TEXT], " ", "" )) == 0 then drawData[i][TEXT] = nil end
+		-- Rainbow
+		drawData[i][RAINBOW] = rawData[i]["rainbow"]
 	end
 
 	-- Sort out heights
