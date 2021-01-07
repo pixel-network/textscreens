@@ -26,6 +26,20 @@ if (CLIENT) then
 		{ name = "right" },
 		{ name = "reload" },
 	}
+
+	language.Add("tool.textscreen.name", "3D2D TextScreen")
+	language.Add("tool.textscreen.desc", "Create a TextScreen with multiple lines, font colours and sizes.")
+	language.Add("tool.textscreen.left", "Spawn a TextScreen.")
+	language.Add("tool.textscreen.right", "Update TextScreen with settings.")
+	language.Add("tool.textscreen.reload", "Copy TextScreen.")
+	language.Add("Undone.textscreens", "Undone TextScreen")
+	language.Add("Undone_textscreens", "Undone TextScreen")
+	language.Add("Cleanup.textscreens", "TextScreens")
+	language.Add("Cleanup_textscreens", "TextScreens")
+	language.Add("Cleaned.textscreens", "Cleaned up all TextScreens")
+	language.Add("Cleaned_textscreens", "Cleaned up all TextScreens")
+	language.Add("SBoxLimit.textscreens", "You've hit the TextScreen limit!")
+	language.Add("SBoxLimit_textscreens", "You've hit the TextScreen limit!")
 end
 
 function TOOL:LeftClick(tr)
@@ -126,11 +140,6 @@ end
 local ConVarsDefault = TOOL:BuildConVarList()
 
 function TOOL.BuildCPanel(CPanel)
-	local logo = vgui.Create("DImage", CPanel)
-	logo:SetSize(267, 134)
-	logo:SetImage("textscreens/logo.png")
-	CPanel:AddItem(logo)
-
 	CPanel:AddControl("Header", {
 		Text = "#tool.textscreen.name",
 		Description = "#tool.textscreen.desc"
