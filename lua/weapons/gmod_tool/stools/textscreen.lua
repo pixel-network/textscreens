@@ -126,11 +126,6 @@ end
 local ConVarsDefault = TOOL:BuildConVarList()
 
 function TOOL.BuildCPanel(CPanel)
-	local logo = vgui.Create("DImage", CPanel)
-	logo:SetSize(267, 134)
-	logo:SetImage("textscreens/logo.png")
-	CPanel:AddItem(logo)
-
 	CPanel:AddControl("Header", {
 		Text = "#tool.textscreen.name",
 		Description = "#tool.textscreen.desc"
