@@ -21,8 +21,10 @@ local SIZE = 7
 local CAMSIZE = 8
 
 -- Make ply:ShouldDrawLocalPlayer() never get called more than once a frame
+local localPly
 hook.Add("Think", "ss_should_draw_both_sides", function()
-	shouldDrawBoth = LocalPlayer():ShouldDrawLocalPlayer()
+	if not IsValid(localPly) then localPly = LocalPlayer() end
+	shouldDrawBoth = localPly:ShouldDrawLocalPlayer()
 end)
 
 local function ValidFont(f)
