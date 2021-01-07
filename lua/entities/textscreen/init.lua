@@ -25,13 +25,13 @@ function ENT:PhysicsUpdate(phys)
 	end
 end
 
-hook.Add("PhysgunPickup", "Textscreens.IncrementHeldBy", function(ply, ent)
+hook.Add("PhysgunPickup", "TextScreens.IncrementHeldBy", function(ply, ent)
 	if IsValid(ent) and ent:GetClass() == "textscreen" then
 		ent.heldby = ent.heldby + 1
 	end
 end)
 
-hook.Add("PhysgunDrop", "Textscreens.DecrementHeldBy", function(ply, ent)
+hook.Add("PhysgunDrop", "TextScreens.DecrementHeldBy", function(ply, ent)
 	if IsValid(ent) and ent:GetClass() == "textscreen" then
 		ent.heldby = ent.heldby - 1
 		local phys = ent:GetPhysicsObject()
@@ -41,8 +41,8 @@ hook.Add("PhysgunDrop", "Textscreens.DecrementHeldBy", function(ply, ent)
 	end
 end)
 
-util.AddNetworkString("textscreens_update")
-util.AddNetworkString("textscreens_download")
+util.AddNetworkString("TextScreens.Update")
+util.AddNetworkString("TextScreens.Download")
 
 function ENT:SetLine(line, text, color, size, font)
 	if not text then return end
@@ -66,13 +66,13 @@ function ENT:SetLine(line, text, color, size, font)
 	}
 end
 
-net.Receive("textscreens_download", function(len, ply)
+net.Receive("TextScreens.Download", function(len, ply)
 	if not IsValid(ply) then return end
 
 	local ent = net.ReadEntity()
 	if IsValid(ent) and ent:GetClass() == "textscreen" then
 		ent.lines = ent.lines or {}
-		net.Start("textscreens_update")
+		net.Start("TextScreens.Update")
 			net.WriteEntity(ent)
 			net.WriteTable(ent.lines)
 		net.Send(ply)
@@ -80,7 +80,7 @@ net.Receive("textscreens_download", function(len, ply)
 end)
 
 function ENT:Broadcast()
-	net.Start("textscreens_update")
+	net.Start("TextScreens.Update")
 		net.WriteEntity(self)
 		net.WriteTable(self.lines)
 	net.Broadcast()

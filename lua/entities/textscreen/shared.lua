@@ -10,7 +10,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Bool", 0, "IsPersisted")
 end
 
-hook.Add("CanTool", "Textscreens.PreventTools", function(ply, tr, tool)
+hook.Add("CanTool", "TextScreens.PreventTools", function(ply, tr, tool)
 	-- only allow textscreen, remover, and permaprops tool
 	local ent = tr.Entity
 	if not IsValid(ent) then return end

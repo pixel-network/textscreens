@@ -9,7 +9,7 @@ if SERVER then
 
 	-- Add to pocket blacklist for DarkRP
 	-- Not using gamemode == "darkrp" because there are lots of flavours of darkrp
-	hook.Add("loadCustomDarkRPItems", "Textscreens.PocketBlacklist", function()
+	hook.Add("loadCustomDarkRPItems", "TextScreens.PocketBlacklist", function()
 		GAMEMODE.Config.PocketBlacklist["textscreen"] = true
 	end)
 end

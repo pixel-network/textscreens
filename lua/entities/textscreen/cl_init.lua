@@ -1,6 +1,6 @@
 include("shared.lua")
 
-local render_convar_range = CreateClientConVar("textscreens_render_range", 1500, true, false, "Determines the render range for Textscreens. Default 1500")
+local render_convar_range = CreateClientConVar("textscreens_render_range", 1500, true, false, "Determines the render range for TextScreens. Default 1500")
 local render_range = render_convar_range:GetInt() * render_convar_range:GetInt() --We multiply this is that we can use DistToSqr instead of Distance so we don't need to workout the square root all the time
 local textscreenFonts = TextScreens.Fonts
 local screenInfo = {}
@@ -22,7 +22,7 @@ local CAMSIZE = 8
 
 -- Make ply:ShouldDrawLocalPlayer() never get called more than once a frame
 local localPly
-hook.Add("Think", "Textscreens.ShouldDrawBothSides", function()
+hook.Add("Think", "TextScreens.ShouldDrawBothSides", function()
 	if not IsValid(localPly) then localPly = LocalPlayer() end
 	shouldDrawBoth = localPly:ShouldDrawLocalPlayer()
 end)
@@ -44,7 +44,7 @@ end, "3D2DScreens")
 function ENT:Initialize()
 	self:SetMaterial("models/effects/vol_light001")
 	self:SetRenderMode(RENDERMODE_NONE)
-	net.Start("textscreens_download")
+	net.Start("TextScreens.Download")
 	net.WriteEntity(self)
 	net.SendToServer()
 end
@@ -174,7 +174,7 @@ local function AddDrawingInfo(ent, rawData)
 	ent:SetRenderBounds(Vector(-x, -y, -1.75), Vector(x, y, 1.75))
 end
 
-net.Receive("textscreens_update", function(len)
+net.Receive("TextScreens.Update", function(len)
 	local ent = net.ReadEntity()
 
 	if IsValid(ent) and ent:GetClass() == "textscreen" then
