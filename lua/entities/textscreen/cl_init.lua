@@ -1,8 +1,8 @@
 include("shared.lua")
 
-local render_convar_range = CreateClientConVar("ss_render_range", 1500, true, false, "Determines the render range for Textscreens. Default 1500")
+local render_convar_range = CreateClientConVar("textscreens_render_range", 1500, true, false, "Determines the render range for Textscreens. Default 1500")
 local render_range = render_convar_range:GetInt() * render_convar_range:GetInt() --We multiply this is that we can use DistToSqr instead of Distance so we don't need to workout the square root all the time
-local textscreenFonts = textscreenFonts
+local textscreenFonts = TextScreens.Fonts
 local screenInfo = {}
 local shouldDrawBoth = false
 
@@ -22,7 +22,7 @@ local CAMSIZE = 8
 
 -- Make ply:ShouldDrawLocalPlayer() never get called more than once a frame
 local localPly
-hook.Add("Think", "ss_should_draw_both_sides", function()
+hook.Add("Think", "Textscreens.ShouldDrawBothSides", function()
 	if not IsValid(localPly) then localPly = LocalPlayer() end
 	shouldDrawBoth = localPly:ShouldDrawLocalPlayer()
 end)
@@ -37,7 +37,7 @@ local function ValidFont(f)
 	end
 end
 
-cvars.AddChangeCallback("ss_render_range", function(convar_name, value_old, value_new)
+cvars.AddChangeCallback("textscreens_render_range", function(convar_name, value_old, value_new)
 	render_range = tonumber(value_new) * tonumber(value_new)
 end, "3D2DScreens")
 
@@ -177,7 +177,7 @@ end
 net.Receive("textscreens_update", function(len)
 	local ent = net.ReadEntity()
 
-	if IsValid(ent) and ent:GetClass() == "sammyservers_textscreen" then
+	if IsValid(ent) and ent:GetClass() == "textscreen" then
 
 		local t = net.ReadTable()
 
@@ -189,7 +189,7 @@ end)
 
 -- Auto refresh
 if IsValid(LocalPlayer()) then
-	local screens = ents.FindByClass("sammyservers_textscreen")
+	local screens = ents.FindByClass("textscreen")
 	for k, v in ipairs(screens) do
 		if screenInfo[v] == nil and v.lines ~= nil then
 			AddDrawingInfo(v, v.lines)
