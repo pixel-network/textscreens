@@ -29,25 +29,29 @@ if (CLIENT) then
 		{ name = "reload" },
 	}
 
-	language.Add("tool.textscreen.name", "3D2D TextScreen")
-	language.Add("tool.textscreen.desc", "Create a TextScreen with multiple lines, font colours and sizes.")
-	language.Add("tool.textscreen.left", "Spawn a TextScreen.")
-	language.Add("tool.textscreen.right", "Update TextScreen with settings.")
-	language.Add("tool.textscreen.reload", "Copy TextScreen.")
-	language.Add("Undone.textscreens", "Undone TextScreen")
-	language.Add("Undone_textscreens", "Undone TextScreen")
-	language.Add("Cleanup.textscreens", "TextScreens")
-	language.Add("Cleanup_textscreens", "TextScreens")
-	language.Add("Cleaned.textscreens", "Cleaned up all TextScreens")
-	language.Add("Cleaned_textscreens", "Cleaned up all TextScreens")
-	language.Add("SBoxLimit.textscreens", "You've hit the TextScreen limit!")
-	language.Add("SBoxLimit_textscreens", "You've hit the TextScreen limit!")
+	language.Add("tool.textscreen.name", "3D2D Textscreens")
+	language.Add("tool.textscreen.desc", "Create a Textscreen with multiple lines, font colours and sizes.")
+	language.Add("tool.textscreen.left", "Spawn a Textscreen.")
+	language.Add("tool.textscreen.right", "Update Textscreen with settings.")
+	language.Add("tool.textscreen.reload", "Copy Textscreen.")
+	language.Add("Undone.textscreens", "Undone Textscreen")
+	language.Add("Undone_textscreens", "Undone Textscreen")
+	language.Add("Cleanup.textscreens", "Textscreens")
+	language.Add("Cleanup_textscreens", "Textscreens")
+	language.Add("Cleaned.textscreens", "Cleaned up all Textscreens")
+	language.Add("Cleaned_textscreens", "Cleaned up all Textscreens")
+	language.Add("SBoxLimit.textscreens", "You've hit the Textscreen limit!")
+	language.Add("SBoxLimit_textscreens", "You've hit the Textscreen limit!")
 end
 
 function TOOL:LeftClick(tr)
 	if (tr.Entity:GetClass() == "player") then return false end
 	if (CLIENT) then return true end
+
 	local ply = self:GetOwner()
+	local shouldRun = hook.Run("PlayerSpawnTextscreen", ply)
+	if shouldRun == false then return false end
+
 	if not (self:GetWeapon():CheckLimit("textscreens")) then return false end
 	-- ensure at least 1 line of the textscreen has text before creating entity
 	local hasText = false
@@ -88,7 +92,7 @@ function TOOL:LeftClick(tr)
 			-- font
 			tonumber(self:GetClientInfo("font" .. i)) or 1,
 
-			tonumber(self:GetClientInfo("rainbow" .. i)) or 0
+			ply:CanUseTextscreenRainbow() and (tonumber(self:GetClientInfo("rainbow" .. i)) or 0) or 0
 		)
 	end
 
@@ -147,6 +151,8 @@ end
 local ConVarsDefault = TOOL:BuildConVarList()
 
 function TOOL.BuildCPanel(CPanel)
+	local localPly = LocalPlayer()
+
 	CPanel:AddControl("Header", {
 		Text = "#tool.textscreen.name",
 		Description = "#tool.textscreen.desc"
@@ -162,6 +168,7 @@ function TOOL.BuildCPanel(CPanel)
 	cvars.AddChangeCallback("textscreen_font1", function(convar_name, value_old, value_new)
 		fontnum = textscreenFonts[tonumber(value_new)] ~= nil and tonumber(value_new) or 1
 		local font = TrimFontName(fontnum)
+		if not IsValid(changefont) then return end
 		changefont:SetText("Change font (" .. font .. ")")
 	end)
 
@@ -342,6 +349,12 @@ function TOOL.BuildCPanel(CPanel)
 		rainbowCheckboxes[i]:SetConVar("textscreen_rainbow" .. i)
 		rainbowCheckboxes[i]:SetTooltip("Enable for rainbow text")
 		rainbowCheckboxes[i]:SetValue(GetConVar("textscreen_rainbow" .. i))
+		
+		if not (IsValid(localPly) and localPly:CanUseTextscreenRainbow()) then
+			rainbowCheckboxes[i]:SetTall(0)
+			rainbowCheckboxes[i]:SetVisible(false)
+		end
+
 		CPanel:AddItem(rainbowCheckboxes[i])
 
 		sliders[i] = vgui.Create("DNumSlider")
