@@ -25,109 +25,57 @@ Custom fonts - requires server restart to take affect -- "Screens_" will be remo
 --]]
 
 -- Default textscreens font
-addFont("Coolvetica outlined", {
-	font = "coolvetica",
-	weight = 400,
-	antialias = false,
-	outline = true
+addFont("Screens_Open Sans SemiBold", {
+	font = "Open Sans SemiBold",
+	weight = 500,
+	antialias = true
 })
 
-addFont("Coolvetica", {
-	font = "coolvetica",
-	weight = 400,
-	antialias = false,
-	outline = false
+addFont("Screens_Open Sans Bold", {
+	font = "Open Sans Bold",
+	weight = 500,
+	antialias = true
 })
 
--- Trebuchet
-addFont("Screens_Trebuchet outlined", {
-	font = "Trebuchet MS",
-	weight = 400,
-	antialias = false,
-	outline = true
+addFont("Screens_Comic Sans MS", {
+	font = "Comic Sans MS",
+	weight = 500,
+	antialias = true
 })
 
 addFont("Screens_Trebuchet", {
 	font = "Trebuchet MS",
 	weight = 400,
-	antialias = false,
-	outline = false
-})
-
--- Arial
-addFont("Screens_Arial outlined", {
-	font = "Arial",
-	weight = 600,
-	antialias = false,
-	outline = true
+	antialias = true
 })
 
 addFont("Screens_Arial", {
 	font = "Arial",
 	weight = 600,
-	antialias = false,
-	outline = false
+	antialias = true
 })
 
--- Roboto Bk
-addFont("Screens_Roboto outlined", {
-	font = "Roboto Bk",
-	weight = 400,
-	antialias = false,
-	outline = true
-})
-
+-- Roboto
 addFont("Screens_Roboto", {
-	font = "Roboto Bk",
-	weight = 400,
-	antialias = false,
-	outline = false
+	font = "Roboto Medium",
+	weight = 500,
+	antialias = true
 })
 
 -- Helvetica
-addFont("Screens_Helvetica outlined", {
-	font = "Helvetica",
-	weight = 400,
-	antialias = false,
-	outline = true
-})
-
 addFont("Screens_Helvetica", {
 	font = "Helvetica",
 	weight = 400,
-	antialias = false,
-	outline = false
+	antialias = true
 })
 
 -- akbar
-addFont("Screens_Akbar outlined", {
-	font = "akbar",
-	weight = 400,
-	antialias = false,
-	outline = true
-})
-
 addFont("Screens_Akbar", {
 	font = "akbar",
 	weight = 400,
-	antialias = false,
-	outline = false
+	antialias = true
 })
 
--- csd
-addFont("Screens_csd outlined", {
-	font = "csd",
-	weight = 400,
-	antialias = false,
-	outline = true
-})
-
-addFont("Screens_csd", {
-	font = "csd",
-	weight = 400,
-	antialias = false,
-	outline = false
-})
 
 if CLIENT then
 
