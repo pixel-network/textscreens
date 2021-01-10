@@ -73,12 +73,15 @@ local function Draw3D2D(ang, pos, camangle, data)
 			surface.SetTextPos(data[i][POSX], data[i][POSY])
 			-- Colour
 			if data[i][RAINBOW] ~= 0 then
-				surface.SetTextColor(HSVToColor(CurTime() % 6 * 60, 1, 1))
+				local chars = data[i][TEXT]
+				for j = 1, #chars do
+					surface.SetTextColor(HSVToColor((CurTime() * 60 + (j * 5)) % 360, 1, 1))
+					surface.DrawText(data[i][TEXT][j])
+				end
 			else
 				surface.SetTextColor(data[i][COL])
+				surface.DrawText(data[i][TEXT])
 			end
-			-- Text
-			surface.DrawText(data[i][TEXT])
 
 			render.PopFilterMin()
 		cam.End3D2D()
