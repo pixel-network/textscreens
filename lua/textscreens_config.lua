@@ -1,4 +1,10 @@
 
+local meta = FindMetaTable("Player")
+
+function meta:CanUseTextscreenRainbow()
+	return self:IsUserGroup("vip") or self:IsUserGroup("vip+")
+end
+
 TextScreens.AllowedTools = {
 	["textscreen"] = true,
 	["remover"] = true,
