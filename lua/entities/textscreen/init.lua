@@ -26,13 +26,13 @@ function ENT:PhysicsUpdate(phys)
 end
 
 hook.Add("PhysgunPickup", "TextScreens.IncrementHeldBy", function(ply, ent)
-	if IsValid(ent) and ent:GetClass() == "textscreen" then
+	if IsValid(ent) and ent:GetClass() == "sammyservers_textscreen" then
 		ent.heldby = ent.heldby + 1
 	end
 end)
 
 hook.Add("PhysgunDrop", "TextScreens.DecrementHeldBy", function(ply, ent)
-	if IsValid(ent) and ent:GetClass() == "textscreen" then
+	if IsValid(ent) and ent:GetClass() == "sammyservers_textscreen" then
 		ent.heldby = ent.heldby - 1
 		local phys = ent:GetPhysicsObject()
 		if IsValid(phys) then
@@ -73,7 +73,7 @@ net.Receive("TextScreens.Download", function(len, ply)
 	if not IsValid(ply) then return end
 
 	local ent = net.ReadEntity()
-	if IsValid(ent) and ent:GetClass() == "textscreen" then
+	if IsValid(ent) and ent:GetClass() == "sammyservers_textscreen" then
 		ent.lines = ent.lines or {}
 		net.Start("TextScreens.Update")
 			net.WriteEntity(ent)
