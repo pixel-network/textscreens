@@ -104,7 +104,7 @@ function TOOL:RightClick(tr)
 	if (CLIENT) then return true end
 	local TraceEnt = tr.Entity
 
-	if (IsValid(TraceEnt) and TraceEnt:GetClass() == "textscreen") then
+	if (IsValid(TraceEnt) and TraceEnt:GetClass() == "sammyservers_textscreen") then
 		for i = 1, 5 do
 			TraceEnt:SetLine(
 				i, -- Line
@@ -131,7 +131,7 @@ end
 
 function TOOL:Reload(tr)
 	local TraceEnt = tr.Entity
-	if (not isentity(TraceEnt) or TraceEnt:GetClass() ~= "textscreen") then return false end
+	if (not isentity(TraceEnt) or TraceEnt:GetClass() ~= "sammyservers_textscreen") then return false end
 
 	for i = 1, 5 do
 		local linedata = TraceEnt.lines[i]
