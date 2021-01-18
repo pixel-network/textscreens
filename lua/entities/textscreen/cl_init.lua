@@ -187,7 +187,7 @@ end
 net.Receive("TextScreens.Update", function(len)
 	local ent = net.ReadEntity()
 
-	if IsValid(ent) and ent:GetClass() == "textscreen" then
+	if IsValid(ent) and ent:GetClass() == "sammyservers_textscreen" then
 
 		local t = net.ReadTable()
 
@@ -199,7 +199,7 @@ end)
 
 -- Auto refresh
 if IsValid(LocalPlayer()) then
-	local screens = ents.FindByClass("textscreen")
+	local screens = ents.FindByClass("sammyservers_textscreen")
 	for k, v in ipairs(screens) do
 		if screenInfo[v] == nil and v.lines ~= nil then
 			AddDrawingInfo(v, v.lines)
