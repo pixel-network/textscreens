@@ -20,6 +20,7 @@ for i = 1, 5 do
 	TOOL.ClientConVar["rainbow" .. i] = 0
 end
 
+TOOL.ClientConVar["original_ui"] = 0 
 cleanup.Register("textscreens")
 
 if (CLIENT) then
@@ -150,7 +151,7 @@ end
 
 local ConVarsDefault = TOOL:BuildConVarList()
 
-function TOOL.BuildCPanel(CPanel)
+local function originalCPanel(CPanel)
 	local localPly = LocalPlayer()
 
 	CPanel:AddControl("Header", {
@@ -398,4 +399,8 @@ function TOOL.BuildCPanel(CPanel)
 			)
 		end
 	end
+end
+
+function TOOL.BuildCPanel(CPanel)
+	originalCPanel(CPanel)
 end
