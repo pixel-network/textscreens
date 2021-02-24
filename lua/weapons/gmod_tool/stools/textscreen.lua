@@ -9,6 +9,8 @@ local sliders = {}
 local rainbowCheckboxes = {}
 local textscreenFonts = TextScreens.Fonts
 
+local colors = {}
+
 for i = 1, 5 do
 	TOOL.ClientConVar["text" .. i] = ""
 	TOOL.ClientConVar["size" .. i] = 20
@@ -151,7 +153,7 @@ end
 
 local ConVarsDefault = TOOL:BuildConVarList()
 
-local function originalCPanel(CPanel)
+local function originalCPanel(CPanel,tool)
 	local localPly = LocalPlayer()
 
 	CPanel:AddControl("Header", {
@@ -202,6 +204,7 @@ local function originalCPanel(CPanel)
 				RunConsoleCommand("textscreen_g" .. i, 255)
 				RunConsoleCommand("textscreen_b" .. i, 255)
 				RunConsoleCommand("textscreen_a" .. i, 255)
+				RunConsoleCommand("textscreen_rainbow" .. i, 0)
 			end
 		end)
 
@@ -220,11 +223,18 @@ local function originalCPanel(CPanel)
 			end
 		end)
 
+		menu:AddOption("Reset rainbows", function()
+			for i = 1, 5 do
+				RunConsoleCommand("textscreen_rainbow" .. i, 0)
+				rainbowCheckboxes[i]:OnChange(false)
+			end
+		end)
+
 		menu:AddOption("Reset fonts", function()
 			ResetFont({1, 2, 3, 4, 5}, false)
 		end)
 
-		menu:AddOption("Reset Rainbow", function()
+		menu:AddOption("Reset rainbows", function()
 			for i = 1, 5 do
 				rainbowCheckboxes[i]:SetValue(0)
 			end
@@ -239,7 +249,8 @@ local function originalCPanel(CPanel)
 				RunConsoleCommand("textscreen_size" .. i, 20)
 				sliders[i]:SetValue(20)
 				rainbowCheckboxes[i]:SetValue(0)
-				RunConsoleCommand("textscreen_text" .. i, "")
+				RunConsoleCommand("textscreen_rainbow" .. i, "")
+				rainbowCheckboxes[i]:OnChange(false)
 				RunConsoleCommand("textscreen_font" .. i, 1)
 				textBox[i]:SetValue("")
 			end
@@ -266,6 +277,8 @@ local function originalCPanel(CPanel)
 				RunConsoleCommand("textscreen_size" .. i, 20)
 				sliders[i]:SetValue(20)
 				RunConsoleCommand("textscreen_text" .. i, "")
+				RunConsoleCommand("textscreen_rainbow" .. i, 0)
+				rainbowCheckboxes[i]:OnChange(false)
 				textBox[i]:SetValue("")
 				ResetFont({i}, true)
 			end)
@@ -279,6 +292,8 @@ local function originalCPanel(CPanel)
 				RunConsoleCommand("textscreen_a" .. i, 255)
 				RunConsoleCommand("textscreen_size" .. i, 20)
 				sliders[i]:SetValue(20)
+				RunConsoleCommand("textscreen_rainbow" .. i, 0)
+				rainbowCheckboxes[i]:OnChange(false)
 				RunConsoleCommand("textscreen_text" .. i, "")
 				RunConsoleCommand("textscreen_font" .. i, 1)
 				textBox[i]:SetValue("")
@@ -325,32 +340,66 @@ local function originalCPanel(CPanel)
 		CVars = table.GetKeys(ConVarsDefault)
 	})
 
+	--wlocal mat = Material("vgui/gradient-u")
+	--local matd = Material("vgui/gradient-d")
+	PIXEL.RegisterFont("TS.LineText", "Open Sans Bold", 22)
+	PIXEL.RegisterFont("TS.EmptyText", "Open Sans Bold", 12)
+	PIXEL.RegisterFont("TS.RBDisText", "Open Sans Bold", 45)
+
 	for i = 1, 5 do
-		lineLabels[i] = CPanel:AddControl("Label", {
-			Text = "Line " .. i,
-			Description = "Line " .. i
-		})
+		lineLabels[i] = vgui.Create("DPanel",CPanel)
+		lineLabels[i].Paint = function(s,w,h)
+			draw.Text({
+				text="Line "..i,
+				pos={w/2,h},
+				xalign=1,
+				yalign=TEXT_ALIGN_BOTTOM,
+				font="PIXEL.TS.LineText",
+				color=PIXEL.Colors.Header
+			})
+		end
+		lineLabels[i].PaintOver = function(s,w,h)
+			surface.SetDrawColor(PIXEL.Colors.Header)
+			surface.DrawRect(0,h-2,w,2)
+		--	surface.SetMaterial(mat)
+		--	surface.DrawTexturedRect(0,0,2,50)
+		--	surface.DrawTexturedRect(w-2,0,2,50)
+		end
+		CPanel:AddPanel(lineLabels[i])
 
-		lineLabels[i]:SetFont("Default")
+		local ctrl = vgui.Create("CtrlColor",CPanel)
+		ctrl:SetLabel("")
+		ctrl:SetConVarR("textscreen_r"..i)
+		ctrl:SetConVarG("textscreen_g"..i)
+		ctrl:SetConVarB("textscreen_b"..i)
+		ctrl:SetConVarA("textscreen_a"..i)
+		ctrl.PaintOver = function(s,w,h)
+			if s:GetDisabled() then
+				draw.Text({
+					text="RAINBOW ENABLED",
+					pos={w/2,h/2},
+					xalign=1,
+					yalign=1,
+					color=PIXEL.Colors.Background,
+					font="PIXEL.TS.RBDisText"
+				})
+			end
+		end
 
-		CPanel:AddControl("Color", {
-			Label = "Line " .. i .. " font color",
-			Red = "textscreen_r" .. i,
-			Green = "textscreen_g" .. i,
-			Blue = "textscreen_b" .. i,
-			Alpha = "textscreen_a" .. i,
-			ShowHSV = 1,
-			ShowRGB = 1,
-			Multiplier = 255
-		})
+
+		CPanel:AddPanel( ctrl )
 
 		rainbowCheckboxes[i] = vgui.Create("DCheckBoxLabel")
 		rainbowCheckboxes[i]:SetText("Rainbow Text")
 		rainbowCheckboxes[i]:SetTextColor(Color(0,0,0,255))
-		rainbowCheckboxes[i]:SetConVar("textscreen_rainbow" .. i)
+		
 		rainbowCheckboxes[i]:SetTooltip("Enable for rainbow text")
 		rainbowCheckboxes[i]:SetValue(GetConVar("textscreen_rainbow" .. i))
-		
+		rainbowCheckboxes[i].OnChange = function(s,t)
+			GetConVar("textscreen_rainbow" .. i):SetInt(t and 1 or 0)
+			ctrl:SetDisabled(t)
+		end
+		rainbowCheckboxes[i]:OnChange(GetConVar("textscreen_rainbow" .. i):GetInt())
 		if not (IsValid(localPly) and localPly:CanUseTextscreenRainbow()) then
 			rainbowCheckboxes[i]:SetTall(0)
 			rainbowCheckboxes[i]:SetVisible(false)
@@ -371,10 +420,28 @@ local function originalCPanel(CPanel)
 		textBox[i]:SetEnterAllowed(true)
 		textBox[i]:SetConVar("textscreen_text" .. i)
 		textBox[i]:SetValue(GetConVar("textscreen_text" .. i):GetString())
-
+		textBox[i]._ovText = {}
+		textBox[i]._rawText = ""
+		
 		textBox[i].OnTextChanged = function()
-			labels[i]:SetText(textBox[i]:GetValue())
+			local xpos = 5
+			local txt = textBox[i]:GetValue()
+			textBox[i]._rawText = txt
+			GetConVar("textscreen_text" .. i):SetString(txt)
+			surface.SetFont(textscreenFonts[fontnum] .. "_MENU")
+			textBox[i]._ovText = {}
+			for char=1,#txt do 
+				local charr = txt:sub(char,char)
+				local ww,hh = surface.GetTextSize(charr)
+				textBox[i]._ovText[char] = {
+					text=charr,
+					posx=xpos,
+					high=hh
+				} 
+				xpos=xpos+ww
+			end
 		end
+		textBox[i].OnTextChanged()
 
 		CPanel:AddItem(textBox[i])
 
@@ -387,7 +454,51 @@ local function originalCPanel(CPanel)
 		labels[i]:SetAutoStretchVertical(true)
 		labels[i]:SetDisabled(true)
 		labels[i]:SetHeight(50)
+		labels[i]:SetText("")
+		labels[i].Paint = function(s,w,h)
+			surface.SetFont(textscreenFonts[fontnum] .. "_MENU")
+			if GetConVar("textscreen_rainbow"..i):GetInt()==1 then
+				if (#textBox[i]._rawText==0)then
+					draw.Text({
+						text="Its feeling kind of empty...",
+						color=Color(204,204,204),
+						font="PIXEL.TS.EmptyText",
+						pos={w/2,h-10},
+						xalign=1,
 
+					})
+					return
+				end
+				for index,v in ipairs(textBox[i]._ovText) do 
+					surface.SetTextPos(v.posx,h/2-(v.high/2))
+					surface.SetTextColor(HSVToColor((CurTime() * 60 + (index * 5)) % 360, 1, 1))
+					surface.DrawText(v.text)
+				end 
+			else
+				if (#textBox[i]._rawText==0)then
+					draw.Text({
+						text="Its feeling kind of empty...",
+						color=Color(204,204,204),
+						font="PIXEL.TS.EmptyText",
+						pos={w/2,h-10},
+						xalign=1,
+
+					})
+				end
+				local _,hh = surface.GetTextSize(textBox[i]._rawText)
+				surface.SetTextPos(5,h/2-(hh/2))
+				surface.SetTextColor(s:GetColor())
+				surface.DrawText(textBox[i]._rawText)
+				
+			end
+		end
+		--labels[i].PaintOver = function(s,w,h)
+		--	surface.SetDrawColor(PIXEL.Colors.Header)
+		--	surface.DrawRect(0,h-2,w,h)
+		--	surface.SetMaterial(matd)
+		--	surface.DrawTexturedRect(0,(h-h)-2,2,h)
+		--	surface.DrawTexturedRect(w-2,(h-h)-2,2,h)
+		--end
 		labels[i].Think = function()
 			labels[i]:SetColor(
 				Color(
@@ -402,5 +513,31 @@ local function originalCPanel(CPanel)
 end
 
 function TOOL.BuildCPanel(CPanel)
-	originalCPanel(CPanel)
+	originalCPanel(CPanel,TOOL)
+end
+
+PIXEL.RegisterFont("TS.HUDFont","Open Sans Bold",45)
+function TOOL:DrawHUD()
+	for i=1,5 do
+			draw.Text({
+				text=GetConVar("textscreen_text" .. i):GetString(),
+				pos={ScrW()/2,ScrH()/2+20+(i*50)},
+				xalign=1,
+				yalign=1,
+				font="PIXEL.TS.HUDFont",
+				color=Either(GetConVar("textscreen_rainbow"..i):GetInt()==1,HSVToColor((CurTime() * 60 + (i * 5)) % 360, 1, 1),Color(GetConVar("textscreen_r"..i):GetInt(),GetConVar("textscreen_g"..i):GetInt(),GetConVar("textscreen_b"..i):GetInt(),GetConVar("textscreen_a"..i):GetInt()))				
+			})
+			-- draw.Text({
+			-- 	text=GetConVar("textscreen_text" .. i):GetString(),
+			-- 	pos={(ScrW()/2)-2,ScrH()/2+20+(i*50)-2},
+			-- 	xalign=1,
+			-- 	yalign=1,
+			-- 	font="PIXEL.TS.HUDFont",
+			-- 	color=PIXEL.Colors.Background
+			-- })
+
+		--if  then 
+	----	else
+	--	end
+	end
 end
